@@ -90,9 +90,9 @@ void dijkstra( int inicial ){
 
 
 int main(int argc, char* argv[]){
-    int E , origen, destino , peso , inicial, contador=0;
-    printf("Ingresar numero de vertices y de conecciones");
-    int V=108, E=11;
+    int origen, destino , peso , inicial, contador=0;
+    //Ingreso de numero de vertices y de conecciones
+    int V=11, E=108;
     estacion est[MAX];
     ifstream infile("codigos.txt");
 	  string linea;
@@ -117,9 +117,10 @@ int main(int argc, char* argv[]){
         peso =1;
         origen=est.numero[contador]=linea;
         destino=est.numero[contador+1]=linea;
-        if(contador!=108){
+        if(contador<108){
         ady[ origen ].push_back( Node( destino , peso ) ); //consideremos grafo dirigido
         ady[ destino ].push_back( Node( origen , peso ) ); //grafo no dirigido
+        contador=contador++;
         }
         else{
           origen=est.numero[contador-1]=linea;
