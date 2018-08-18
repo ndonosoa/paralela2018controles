@@ -51,10 +51,11 @@ void relajacion( int actual , int adyacente , int peso ){
 void print( int destino ){
     if( previo[ destino ] != -1 )    //si aun poseo un vertice previo
         print( previo[ destino ] );  //recursivamente sigo explorando
-    printf("%d " , destino );        //terminada la recursion imprimo los vertices recorridos
+    printf("%d " , est[destino].nombreEstacion);
+    //printf("%d " , destino );        //terminada la recursion imprimo los vertices recorridos
 }
 
-void dijkstra( int inicial ){
+void dijkstra( int inicial ,int destino){
     init(); //inicializamos nuestros arreglos
     Q.push( Node( inicial , 0 ) ); //Insertamos el v�rtice inicial en la Cola de Prioridad
     distancia[ inicial ] = 0;      //Este paso es importante, inicializamos la distancia del inicial como 0
@@ -81,9 +82,7 @@ void dijkstra( int inicial ){
     }
 
     puts("\n**************Impresion de camino mas corto**************");
-    printf("Ingrese vertice destino: ");
-    int destino;
-    scanf("%d" , &destino );
+    printf("Ingresando vertice destino: ");
     print( destino );
     printf("\n");
 }
@@ -92,7 +91,11 @@ void dijkstra( int inicial ){
 int main(int argc, char* argv[]){
     int origen, destino , peso , inicial, contador=0;
     //Ingreso de numero de vertices y de conecciones
-    if (argv[1]='f') {
+    string input = argv[1];
+    int posicion = input.find(' ');
+    string token = input.substr(0,posicion);
+    input.erase(0,posicion+1);
+    if (input=='f') {
       int V=11, E=108;
       estacion est[MAX];
       ifstream infile1("codigos.txt");
@@ -131,10 +134,18 @@ int main(int argc, char* argv[]){
             break;
           }
       }
-      printf("Ingrese el vertice inicial: ");
-      scanf("%d" , &inicial );
-      dijkstra( inicial );
-    }else if(argv[1]="v"){
+      printf("Ingresando el vertice inicial y final: ");
+      int posicion = input.find(' ');
+      string token = input.substr(0,posicion);
+      input.erase(0,posicion+1);
+      inicial =atoi(input);
+
+      int posicion = input.find(' ');
+      string token = input.substr(0,posicion);
+      input.erase(0,posicion+1);
+      destino =atoi(input);
+      dijkstra( inicial ,destino);
+    }else if(argv[1]=="v"){
       printf("Integrantes: \n");
       printf("Integrantes: Nataniel Donoso Acevedo \n");
       printf("Integrantes: Esteban Hernandez Bratesco \n ");
