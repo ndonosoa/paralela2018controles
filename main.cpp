@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 #include <fstream>
 #include <string.h>
 #include <vector>
@@ -48,14 +48,21 @@ void relajacion( int actual , int adyacente , int peso ){
 }
 
 //Impresion del camino mas corto desde el vertice inicial y final ingresados
-void print( int destino ){
+void print( int destino, estacion est[] , int cant){
     if( previo[ destino ] != -1 )    //si aun poseo un vertice previo
-        print( previo[ destino ] );  //recursivamente sigo explorando
-    printf("%d " , est[destino].nombreEstacion);
-    //printf("%d " , destino );        //terminada la recursion imprimo los vertices recorridos
+        print( previo[ destino],est,cant );  //recursivamente sigo explorando
+        for(int i=0;i<cant;i++){
+          if(est[i].numero == destino){
+            cout<<est[i].nombreEstacion<<"- ";        //terminada la recursion imprimo los vertices recorridos
+            i=cant;
+          }
+          
+        }
+    //cout<<est[destino].nombreEstacion<<endl;
+
 }
 
-void dijkstra( int inicial ,int destino){
+void dijkstra( int inicial ,int destino, estacion est[],int cant){
     init(); //inicializamos nuestros arreglos
     Q.push( Node( inicial , 0 ) ); //Insertamos el v�rtice inicial en la Cola de Prioridad
     distancia[ inicial ] = 0;      //Este paso es importante, inicializamos la distancia del inicial como 0
@@ -76,27 +83,26 @@ void dijkstra( int inicial ,int destino){
     }
 
 
-    printf( "Distancias mas cortas iniciando en vertice %d\n" , inicial );
+    /*printf( "Distancias mas cortas iniciando en vertice %d\n" , inicial );
     for( int i = 1 ; i <= V ; ++i ){
         printf("Vertice %d , distancia mas corta = %d\n" , i , distancia[ i ] );
-    }
+    }*/
 
-    puts("\n**************Impresion de camino mas corto**************");
-    printf("Ingresando vertice destino: ");
-    print( destino );
+    print( destino, est, cant);
     printf("\n");
 }
 
 
 int main(int argc, char* argv[]){
-    int origen, destino , peso , inicial, contador=0;
+    int origen, destino , peso , inicial, contador=0,cant=0;
     //Ingreso de numero de vertices y de conecciones
     string input = argv[1];
     int posicion = input.find(' ');
     string token = input.substr(0,posicion);
     input.erase(0,posicion+1);
-    if (input=='f') {
-      int V=11, E=108;
+    if (token=="-f") {
+      int E=118;
+      V=119;
       estacion est[MAX];
       ifstream infile1("codigos.txt");
   	  string linea;
@@ -104,12 +110,14 @@ int main(int argc, char* argv[]){
        est[contador].codigo=linea;
        contador++;
       }
+      cant=contador;
       contador=0;
       ifstream infile2("numeros.txt");
       while(getline(infile2, linea)){
        est[contador].numero=stoi(linea);
        contador++;
       }
+      contador=0;
       ifstream infile3("estaciones.txt");
       while(getline(infile3, linea)){
        est[contador].nombreEstacion=linea;
@@ -118,37 +126,42 @@ int main(int argc, char* argv[]){
       contador=0;
       while( E-- ){
           //instanciación de la matriz de adyacencia
-          peso =1;
-          origen=est[contador].numero;
-          destino=est[contador+1].numero;
-          if(contador<108){
-          ady[ origen ].push_back( Node( destino , peso ) ); //consideremos grafo dirigido
-          ady[ destino ].push_back( Node( origen , peso ) ); //grafo no dirigido
-          contador=contador++;
-          }
-          else{
-            origen=est[contador-1].numero;
-            destino=est[contador-1].numero;
-            ady[ origen ].push_back( Node( destino , peso ) ); //consideremos grafo dirigido
-            ady[ destino ].push_back( Node( origen , peso ) ); //grafo no dirigido
-            break;
-          }
+          peso =1;         
+          if(est[contador].nombreEstacion.find(',') == -1){
+            origen=est[contador].numero;
+            destino=est[contador+1].numero;
+            if(contador<118){
+              ady[ origen ].push_back( Node( destino , peso ) ); //consideremos grafo dirigido
+              ady[ destino ].push_back( Node( origen , peso ) ); //grafo no dirigido
+              contador++;
+            }
+        }
+          
       }
-      printf("Ingresando el vertice inicial y final: ");
-      int posicion = input.find(' ');
-      string token = input.substr(0,posicion);
+      posicion = input.find(' ');
+      token = input.substr(0,posicion);
       input.erase(0,posicion+1);
-      inicial =atoi(input);
+      for(int i=0;i<cant;i++){
+        if(est[i].codigo == token){ //revisar qué pasa con las estaciones con doble código
+          inicial = est[i].numero;
+          i=cant;
+        }
+      }
 
-      int posicion = input.find(' ');
-      string token = input.substr(0,posicion);
-      input.erase(0,posicion+1);
-      destino =atoi(input);
-      dijkstra( inicial ,destino);
-    }else if(argv[1]=="v"){
+       posicion = input.find(' ');
+      token = input.substr(0,posicion);
+      for(int i=0;i<cant;i++){
+        if(est[i].codigo == token){ //revisar qué pasa con las estaciones con doble código
+          destino = est[i].numero;
+          i=cant;
+        }
+      }
+      //cout<<"inicio: "<<inicial<<" | destino: "<<destino<<endl;
+      dijkstra( inicial ,destino, est,cant);
+    }else if(token=="-v"){
       printf("Integrantes: \n");
-      printf("Integrantes: Nataniel Donoso Acevedo \n");
-      printf("Integrantes: Esteban Hernandez Bratesco \n ");
+      printf("Nataniel Donoso Acevedo \n");
+      printf("Esteban Hernandez Bratesco \n ");
     }
     return 0;
 }

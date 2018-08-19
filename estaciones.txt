@@ -25,11 +25,11 @@ Escuela Militar
 Manquehue 
 Hernando de Magallanes 
 Los Dominicos 
-La Cisterna 
-El Parrón 
-Lo Ovalle 
-Ciudad del Niño 
-Departamental  
+LC La Cisterna 
+EP El Parrón 
+LO Lo Ovalle 
+CN Ciudad del Niño 
+DE Departamental  
 Lo Vial 
 San Miguel 
 El Llano 
