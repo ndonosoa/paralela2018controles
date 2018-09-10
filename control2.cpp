@@ -1,13 +1,16 @@
+#include <omp.h>
 #include <iostream>
+#include <ctime>
 #include <fstream>
 #include <string.h>
 #include <vector>
 #include <queue>
-#include <omp.h>
+#include <string>
 using namespace std;
 #define MAX 10005 //maximo numero de v�rtices
 #define Node pair< int , int > //definimos el nodo como un par( first , second ) donde first es el vertice adyacente y second el peso de la arista
 #define INF 1<<30 //definimos un valor grande que represente la distancia infinita inicial, basta conque sea superior al maximo valor del peso en alguna de las aristas
+unsigned t0, t1;
 
 int matrizAdy[119][119];
 //La cola de prioridad de C++ por default es un max-Heap (elemento de mayor valor en el tope)
@@ -98,14 +101,7 @@ void dijkstra( int inicial ,int destino, estacion est[],int cant){
 int main(int argc, char* argv[]){
     int origen, destino , peso , inicial,contador=0,cant=0;
     int tid,nthreads;
-    #pragma omp parallel private(tid)
-    {
-        tid = omp_get_thread_num();
-        nthreads = omp_get_num_threads();
-        cout << "Soy el hilo  OpenMP " << tid <<"de " <<nthreads<< "Estoy en el core "<< sched_getcpu()<< "del nodo " << getenv("SLURM_NODEID")<<endl;
-        sleep(5);
-    }
-    //Ingreso de numero de vertices y de conecciones
+        //Ingreso de numero de vertices y de conecciones
     string input = argv[1];
     int posicion = input.find(' ');
     string token = input.substr(0,posicion);
@@ -142,12 +138,12 @@ int main(int argc, char* argv[]){
             origen=est[contador].numero;
             destino=est[contador+1].numero;
               //if(origen==contador){
-                matrizAdy[ origen ][ destino ]= 1;
+                matrizAdy[ contador ][ origen ]= 1;
                 /*ady[ origen ].push_back( Node( destino , peso ) ); //consideremos grafo dirigido
                 ady[ destino ].push_back( Node( origen , peso ) ); //grafo no dirigido */
               //}
             }
-          }contador++;
+          }
       }
       for(int y=0;y<118;y++){
         for(int z=0;z<118;z++){
@@ -172,9 +168,18 @@ int main(int argc, char* argv[]){
           destino = est[i].numero;
           i=cant;
         }
+
       }
-      //cout<<"inicio: "<<inicial<<" | destino: "<<destino<<endl;
-      //dijkstra( inicial ,destino, est,cant);
+      cout << "matriz de adyacencia con las estaciones del metro completadas :) " << endl;
+      #pragma omp parallel private(tid)
+      {
+          tid = omp_get_thread_num();
+          nthreads = omp_get_num_threads();
+          std::cout<<"Soy el hilo= "<<tid<<" de "<< nthreads <<" que somos."<<std::endl;
+          cout<<"inicio: "<<inicial<<" | destino: "<<destino<<endl;
+          cout<<"aqui va dijkstra o vecino mas proximo para hacerlo en paralelo" <<endl;
+          //dijkstra( inicial ,destino, est,cant);
+      }
     }else if(token=="-v"){
       printf("Integrantes: \n");
       printf("Nataniel Donoso Acevedo \n");
